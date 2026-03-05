@@ -1,22 +1,46 @@
 package tui
 
 import (
-	"fmt"
-	"strings"
-
+	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/vianch/paco/internal/pkg"
 )
 
 type Model struct {
+	table    table.Model
 	scripts  []pkg.Script
-	cursor   int
 	selected *pkg.Script
 	quitting bool
 }
 
 func NewModel(scripts []pkg.Script) Model {
-	return Model{scripts: scripts}
+	columns := []table.Column{
+		{Title: "Script", Width: 20},
+		{Title: "Command", Width: 50},
+	}
+
+	rows := make([]table.Row, len(scripts))
+	for i, s := range scripts {
+		rows[i] = table.Row{s.Name, s.Command}
+	}
+
+	height := len(scripts)
+	if height > 15 {
+		height = 15
+	}
+
+	t := table.New(
+		table.WithColumns(columns),
+		table.WithRows(rows),
+		table.WithFocused(true),
+		table.WithHeight(height),
+	)
+	t.SetStyles(TableStyles())
+
+	return Model{
+		table:   t,
+		scripts: scripts,
+	}
 }
 
 func (m Model) Init() tea.Cmd {
@@ -24,26 +48,23 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q", "esc":
 			m.quitting = true
 			return m, tea.Quit
-		case "up", "k":
-			if m.cursor > 0 {
-				m.cursor--
-			}
-		case "down", "j":
-			if m.cursor < len(m.scripts)-1 {
-				m.cursor++
-			}
 		case "enter":
-			m.selected = &m.scripts[m.cursor]
+			idx := m.table.Cursor()
+			if idx >= 0 && idx < len(m.scripts) {
+				m.selected = &m.scripts[idx]
+			}
 			return m, tea.Quit
 		}
 	}
-	return m, nil
+	m.table, cmd = m.table.Update(msg)
+	return m, cmd
 }
 
 func (m Model) View() string {
@@ -51,30 +72,10 @@ func (m Model) View() string {
 		return ""
 	}
 
-	var b strings.Builder
-
-	b.WriteString(titleStyle.Render("  paco") + "\n")
-	b.WriteString(titleStyle.Render("  Package Commands Runner") + "\n\n")
-
-	for i, s := range m.scripts {
-		if m.cursor == i {
-			line := fmt.Sprintf(" %s %s  %s",
-				cursorIcon,
-				selectedStyle.Render(s.Name),
-				commandStyle.Render(s.Command),
-			)
-			b.WriteString(line + "\n")
-		} else {
-			line := fmt.Sprintf("   %s  %s",
-				itemStyle.Render(s.Name),
-				commandStyle.Render(s.Command),
-			)
-			b.WriteString(line + "\n")
-		}
-	}
-
-	b.WriteString(helpStyle.Render("\n  j/k or arrows to navigate | enter to run | q to quit"))
-	return b.String()
+	s := "\n" + titleStyle.Render("  paco - Package Commands Runner") + "\n\n"
+	s += baseStyle.Render(m.table.View()) + "\n"
+	s += helpStyle.Render("  j/k or arrows to navigate | enter to run | q to quit") + "\n"
+	return s
 }
 
 func (m Model) SelectedScript() *pkg.Script {

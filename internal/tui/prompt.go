@@ -60,9 +60,9 @@ func (m PromptModel) View() string {
 
 	for i, opt := range m.options {
 		if m.cursor == i {
-			b.WriteString(selectedStyle.Render(fmt.Sprintf("[ %s ]", opt)))
+			b.WriteString(promptSelectedStyle.Render(fmt.Sprintf("[ %s ]", opt)))
 		} else {
-			b.WriteString(itemStyle.Render(fmt.Sprintf("  %s  ", opt)))
+			b.WriteString(promptNormalStyle.Render(fmt.Sprintf("  %s  ", opt)))
 		}
 		b.WriteString("  ")
 	}
