@@ -26,6 +26,11 @@ func main() {
 		fmt.Println("Created package.json!")
 	}
 
+	pkgManager := promptPackageManager()
+	if pkgManager == "" {
+		os.Exit(0)
+	}
+
 	pkgJSON, err := pkg.ParsePackageJSON(path)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -52,15 +57,56 @@ func main() {
 		os.Exit(0)
 	}
 
-	fmt.Printf("Running: %s -> %s\n", selected.Name, selected.Command)
-	if err := runner.RunScript(selected.Command); err != nil {
+	command := buildCommand(pkgManager, selected.Name, selected.Command)
+	fmt.Printf("Running: %s\n", command)
+	if err := runner.RunScript(command); err != nil {
 		fmt.Fprintf(os.Stderr, "Script failed: %v\n", err)
 		os.Exit(1)
 	}
 }
 
+func buildCommand(manager, scriptName, rawCommand string) string {
+	switch manager {
+	case "npm":
+		return "npm run " + scriptName
+	case "yarn":
+		return "yarn " + scriptName
+	case "pnpm":
+		return "pnpm " + scriptName
+	case "bun":
+		return "bun " + scriptName
+	default:
+		return rawCommand
+	}
+}
+
+func promptPackageManager() string {
+	detected := pkg.DetectPackageManager()
+	options := []string{"Direct", "npm", "yarn", "pnpm", "bun"}
+
+	defaultOption := "Direct"
+	if detected != "" {
+		defaultOption = detected
+	}
+
+	prompt := tui.NewPromptModelWithDefault(
+		"How do you want to run scripts?",
+		options,
+		defaultOption,
+	)
+	p := tea.NewProgram(prompt)
+	finalModel, err := p.Run()
+	if err != nil {
+		return ""
+	}
+	return finalModel.(tui.PromptModel).Chosen()
+}
+
 func promptCreatePackageJSON() bool {
-	prompt := tui.NewPromptModel("No package.json found. Create one with default scripts?")
+	prompt := tui.NewPromptModel(
+		"No package.json found. Create one with default scripts?",
+		[]string{"Yes", "No"},
+	)
 	p := tea.NewProgram(prompt)
 	finalModel, err := p.Run()
 	if err != nil {

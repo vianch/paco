@@ -54,6 +54,25 @@ func (p *PackageJSON) ScriptList() []Script {
 	return scripts
 }
 
+func DetectPackageManager() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	lockFiles := map[string]string{
+		"pnpm-lock.yaml": "pnpm",
+		"yarn.lock":      "yarn",
+		"bun.lockb":      "bun",
+		"package-lock.json": "npm",
+	}
+	for file, manager := range lockFiles {
+		if _, err := os.Stat(filepath.Join(dir, file)); err == nil {
+			return manager
+		}
+	}
+	return ""
+}
+
 func CreateDefaultPackageJSON(dir string) (string, error) {
 	pkg := PackageJSON{
 		Name:    filepath.Base(dir),

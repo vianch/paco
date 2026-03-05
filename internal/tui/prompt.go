@@ -15,10 +15,25 @@ type PromptModel struct {
 	quitting bool
 }
 
-func NewPromptModel(question string) PromptModel {
+func NewPromptModel(question string, options []string) PromptModel {
 	return PromptModel{
 		question: question,
-		options:  []string{"Yes", "No"},
+		options:  options,
+	}
+}
+
+func NewPromptModelWithDefault(question string, options []string, defaultOption string) PromptModel {
+	cursor := 0
+	for i, opt := range options {
+		if opt == defaultOption {
+			cursor = i
+			break
+		}
+	}
+	return PromptModel{
+		question: question,
+		options:  options,
+		cursor:   cursor,
 	}
 }
 
@@ -69,6 +84,10 @@ func (m PromptModel) View() string {
 
 	b.WriteString(helpStyle.Render("\n\n  arrows to select | enter to confirm"))
 	return b.String()
+}
+
+func (m PromptModel) Chosen() string {
+	return m.chosen
 }
 
 func (m PromptModel) Accepted() bool {
