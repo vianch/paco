@@ -26,11 +26,6 @@ func main() {
 		fmt.Println("Created package.json!")
 	}
 
-	pkgManager := promptPackageManager()
-	if pkgManager == "" {
-		os.Exit(0)
-	}
-
 	pkgJSON, err := pkg.ParsePackageJSON(path)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -54,6 +49,11 @@ func main() {
 	m := finalModel.(tui.Model)
 	selected := m.SelectedScript()
 	if selected == nil {
+		os.Exit(0)
+	}
+
+	pkgManager := promptPackageManager()
+	if pkgManager == "" {
 		os.Exit(0)
 	}
 
@@ -85,12 +85,14 @@ func promptPackageManager() string {
 	options := []string{"Direct", "npm", "yarn", "pnpm", "bun"}
 
 	defaultOption := "Direct"
+	question := "How do you want to run this script?"
 	if detected != "" {
 		defaultOption = detected
+		question = fmt.Sprintf("How do you want to run this script? (recommended: %s)", detected)
 	}
 
 	prompt := tui.NewPromptModelWithDefault(
-		"How do you want to run scripts?",
+		question,
 		options,
 		defaultOption,
 	)
