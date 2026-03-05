@@ -1,4 +1,4 @@
-module github.com/victorchavarro/paco
+module github.com/vianch/paco
 
 go 1.24.0
 

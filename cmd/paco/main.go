@@ -5,9 +5,9 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/victorchavarro/paco/internal/pkg"
-	"github.com/victorchavarro/paco/internal/runner"
-	"github.com/victorchavarro/paco/internal/tui"
+	"github.com/vianch/paco/internal/pkg"
+	"github.com/vianch/paco/internal/runner"
+	"github.com/vianch/paco/internal/tui"
 )
 
 func main() {

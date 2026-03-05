@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/victorchavarro/paco/internal/pkg"
+	"github.com/vianch/paco/internal/pkg"
 )
 
 type Model struct {

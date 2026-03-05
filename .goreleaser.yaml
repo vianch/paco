@@ -22,9 +22,9 @@ archives:
 
 brews:
   - repository:
-      owner: victorchavarro
+      owner: vianch
       name: homebrew-tap
-    homepage: https://github.com/victorchavarro/paco
+    homepage: https://github.com/vianch/paco
     description: "TUI package.json script runner"
     license: "MIT"
     install: |
