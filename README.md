@@ -29,14 +29,24 @@ paco
 
 If no `package.json` is found, paco will offer to create one with default scripts.
 
-## Release v0.1.0
+## Releases
 
-1. Homebrew tap repo created - https://github.com/vianch/homebrew-tap
-2. Code pushed to `origin/main`
-3. Tag `v0.1.0` created and pushed
-4. GoReleaser built 6 binaries (linux/darwin/windows x amd64/arm64)
-5. GitHub release published - https://github.com/vianch/paco/releases/tag/v0.1.0
-6. Homebrew formula pushed to `vianch/homebrew-tap`
+### v0.2.0
+
+- Replaced custom list UI with [Bubbles Table](https://github.com/charmbracelet/bubbles) component
+- Script and Command columns with scrollable, focused table
+- Purple theme for borders, headers, and selected row highlight
+- Added README with install instructions
+- Release: https://github.com/vianch/paco/releases/tag/v0.2.0
+
+### v0.1.0
+
+- Initial release
+- Interactive TUI script selection menu
+- Auto-create `package.json` when missing
+- Cross-platform builds (linux/darwin/windows x amd64/arm64)
+- Homebrew tap created at https://github.com/vianch/homebrew-tap
+- Release: https://github.com/vianch/paco/releases/tag/v0.1.0
 
 ## License
 
