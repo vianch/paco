@@ -15,6 +15,17 @@ Or with Go:
 go install github.com/vianch/paco/cmd/paco@latest
 ```
 
+## Upgrade
+
+If you already have paco installed via Homebrew, upgrade to the latest version:
+
+```bash
+brew update
+brew upgrade vianch/tap/paco
+```
+
+> **Note:** Use the fully qualified name `vianch/tap/paco` to ensure Homebrew upgrades from the correct tap.
+
 ## Usage
 
 Run `paco` in any directory with a `package.json`:
@@ -30,6 +41,13 @@ paco
 If no `package.json` is found, paco will offer to create one with default scripts.
 
 ## Releases
+
+### v0.3.0
+
+- Auto-detect lock file (`pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, `bun.lockb`) to pre-select package manager
+- Package manager prompt before script selection (Direct, npm, yarn, pnpm, bun)
+- Added bun support
+- Release: https://github.com/vianch/paco/releases/tag/v0.3.0
 
 ### v0.2.0
 
